@@ -4,11 +4,11 @@ from contextlib import closing
 from bs4 import BeautifulSoup
 
 # grab the item name
-link = "https://www.bloodborne-wiki.com/2015/03/third-umbilical-cord.html"
+link = "https://www.bloodborne-wiki.com/2015/03/hunter-garb.html"
 
 html_content = get(link).content
 parsed_html = BeautifulSoup(html_content , 'html.parser')
-table = parsed_html.find('table' , class_='wiki-blog-table-sheader1')
+table = parsed_html.find('table' , class_='wiki-blog-table-sheader')
 rows = table.find_all('tr')	
 tds = rows[1].find_all('td') # the second row holds the info, the first is a header
 name = tds[1].get_text() # the first td is an image, the second td is the name
@@ -27,13 +27,17 @@ img_link = big_img.get('src')
 print(img_link)
 
 # grab the availability
-string = tr.find('h3' , string='Availability')
-unordered_list = string.find_next_sibling('ul')
-list_items = unordered_list.find_all('li')
-availability_list = []
-for items in list_items:
-	availability_list.append(items.get_text())
-print(availability_list)
-
+try:
+	string = tr.find('h3' , string='Availability')
+	unordered_list = string.find_next_sibling('ul')
+	list_items = unordered_list.find_all('li')
+	availability_list = []
+	for items in list_items:
+		availability_list.append(items.get_text())
+	print(availability_list)
+except Exception as e: 
+	print("error scraping link: " , link)
+	print("Issue occured attempting to scrape availability")
+	print(e)
 
 print("nabbed item")

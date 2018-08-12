@@ -1,2 +1,3 @@
 - Due to an error on the wiki (the 'Overview' section for evelyn is entitled 'Availability'), the scraper erroneously saved the overview text as the availability list
 - I'm going to manually enter the third umbilical cord, due to importance and its special nature
+- see line above re: attire piece One-eyed Iron Helm, due to dual nature of item, will hand enter

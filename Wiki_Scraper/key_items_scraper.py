@@ -16,51 +16,30 @@ def str_search_case_insensitive(s):
 
 
 
-# materials is subdivided on the wiki into two separate pages, upgrade materials and ritual materials
-upgrades_url = 'https://www.bloodborne-wiki.com/p/upgrade-materials.html'
-ritual_materials_url = 'https://www.bloodborne-wiki.com/p/ritual-materials.html'
+# url for wiki list of all right handed weapons
+url = "https://www.bloodborne-wiki.com/p/keys.html"
 
+response = get(url).content
 
-
-# grab link to every upgrade material, then grab link to every ritual item
+# parse the html of the list page such that i have a link to every relevant weapon, store these links in a list
 links = []
-
-# first, upgrades
-response = get(upgrades_url).content
-html = BeautifulSoup(response , 'html.parser')
-table = html.find('table' , class_='wiki-blog-table-sheader1')
-rows = table.find_all('tr')
-for row in rows:
-	a_tag = row.find('a')
-	if a_tag:
-		link = a_tag.get('href')
-		if link:
-			links.append(link)
-
-# now we grab ritual item links
-response = get(ritual_materials_url).content
 html = BeautifulSoup(response , 'html.parser')
 tables = html.find_all('table' , class_='wiki-blog-table-sheader1')
-# only first two tables have links we need
-for i in range(2):
-	rows = tables[i].find_all('tr')
+
+for table in tables:
+	rows = table.find_all('tr')
 	for row in rows:
-		a_tag = row.find('a')
-		if a_tag:
-			link = a_tag.get('href')
+		tag = row.find('a')
+		if tag:
+			link = tag.get('href')
 			if link:
 				links.append(link)
-
-
-print(len(links)) # print for viaual approximation of success
 
 links = set(links) # removes any potential duplicates
 
 
-
-
 '''
-	The following is the general structure of a material
+	The following is the general structure of a Consumable
 		consumable_name = {
 			picture : "link_to_picture"
 			in_game_desc : "text"
@@ -68,10 +47,11 @@ links = set(links) # removes any potential duplicates
 		}
 		
 '''
-materials = {}
-
+key_items = {}
 for link in links:
 	current_item = {}
+
+	print(link)
 
 	# grab the item name
 	try:
@@ -86,7 +66,6 @@ for link in links:
 		print("Error Scraping link: " , link)
 		print("Exception took place scraping name attribute")
 		print(e)
-
 
 	# grab the in game description
 	try:
@@ -125,13 +104,13 @@ for link in links:
 		print(e)
 
 	# add this item record into the larger dict of items
-	materials[name] = current_item
+	key_items[name] = current_item
 
 	print("nabbed item")
 
 # now that we've gotten all the items, dump them as a json file
-with open('JSON/materials.json' , 'w') as f:
-	json.dump(materials , f)
+with open('JSON/key_items.json' , 'w') as f:
+	json.dump(key_items , f)
 
 
 
